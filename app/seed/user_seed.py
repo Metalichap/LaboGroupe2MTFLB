@@ -2,7 +2,7 @@ from argon2 import PasswordHasher
 
 from app import app, db
 from app.framework.seed import Seedable
-#from app.models.basket import Basket
+from app.models.basket import Basket
 from app.models.role import Role
 from app.models.user import User
 
