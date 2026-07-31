@@ -7,6 +7,8 @@ services:
       - ./:/app
     ports:
       - 8080:8080
+    networks:
+      - backend
 
   db-example:
     image: postgres:18
@@ -27,6 +29,8 @@ services:
       # DOSSIER_HOTE:DOSSIER_CONTAINER
       - ./init_db:/init_db
       - app-volume:/var/lib/postgresql/18/docker
+    networks:
+      - backend
 
   # Serveur SMTP "bouchon" pour le développement.
   # Mailpit accepte tous les mails et n'en envoie AUCUN: il les garde et les
@@ -43,3 +47,6 @@ services:
 
 volumes:
   app-volume:
+
+networks:
+  backend:
