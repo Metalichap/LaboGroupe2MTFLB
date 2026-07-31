@@ -13,6 +13,8 @@ class Priority(BaseEntity, db.Model):
     priority_level = db.Column(db.Integer, nullable=False)
     priority_delay_hours = db.Column(db.Integer, nullable=False)
 
+    tickets = db.relationship('Ticket', back_populates='priority')
+
 
 
 

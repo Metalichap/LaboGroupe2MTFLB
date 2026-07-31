@@ -34,8 +34,14 @@ class User(BaseEntity, db.Model):
     team = db.relationship('Team', back_populates='members')
     site = db.relationship('Site', back_populates='users')
 
-    ticket_created = db.relationship()
-    ticket_assigned = db.relationship()
+    tickets_created = db.relationship('Ticket', back_populates='author')
+    tickets_assigned = db.relationship('Ticket', back_populates='technician')
+
+    comments = db.relationship('Comment', back_populates='author')
+    ticket_status_histories = db.relationship('TicketStatusHistory', back_populates='user')
+    equipments = db.relationship('Equipment', back_populates='user')
+    knowledge_articles = db.relationship('KnowledgeArticle', back_populates='author')
+    satisfaction_surveys = db.relationship('SatisfactionSurvey', back_populates='client')
 
     # --- logique métier -----------------------------------------------------
     # Un modèle n'est pas qu'un sac de colonnes: les règles qui ne concernent

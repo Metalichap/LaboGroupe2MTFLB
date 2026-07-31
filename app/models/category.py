@@ -12,6 +12,9 @@ class Category(BaseEntity, db.Model):
     category_name = db.Column(db.String(127), unique=True, nullable=False, index=True)
     category_description = db.Column(db.Text)
 
+    tickets = db.relationship('Ticket', back_populates='category')
+    knowledge_articles = db.relationship('KnowledgeArticle', back_populates='category')
+
 
 
 
