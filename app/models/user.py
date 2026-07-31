@@ -15,24 +15,27 @@ class User(BaseEntity, db.Model):
     __tablename__ = 'users'
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
-    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    user_name = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    user_email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     # 255 caractères: un hash argon2 fait ~100 caractères, on prévoit large.
-    password = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), nullable=False, default="",
-                            server_default="")
-    # Adresse confirmée par un lien reçu par mail (voir
-    # EmailVerificationService). server_default=false: les comptes existants au
-    # moment de la migration doivent recevoir une valeur.
-    email_verified = db.Column(db.Boolean, nullable=False, default=False,
-                               server_default=db.false())
+    user_password = db.Column(db.String(255), nullable=False)
+
+    user_firstname = db.Column(db.String(127), nullable=False)
+    user_lastname = db.Column(db.String(127), nullable=False)
+
+    team_id = db.Column(db.ForeignKey('teams.team_id'), nullable=True)
+    site_id = db.Column(db.ForeignKey('sites.site_id'), nullable=True)
+
+
 
     # cascade='all, delete-orphan': supprimer un user supprime ses lignes
     # d'association (sinon la base refuserait, à cause des clés étrangères).
-    roles = db.relationship('UserRole', back_populates='user',
-                            cascade='all, delete-orphan')
-    baskets = db.relationship('Basket', back_populates='user',
-                              cascade='all, delete-orphan')
+    roles = db.relationship('UserRole', back_populates='user', cascade='all, delete-orphan')
+    team = db.relationship('Team', back_populates='members')
+    site = db.relationship('Site', back_populates='users')
+
+    ticket_created = db.relationship()
+    ticket_assigned = db.relationship()
 
     # --- logique métier -----------------------------------------------------
     # Un modèle n'est pas qu'un sac de colonnes: les règles qui ne concernent
@@ -61,13 +64,5 @@ class User(BaseEntity, db.Model):
     def is_admin(self) -> bool:
         return "ADMIN" in self.role_names()
 
-    def current_basket(self):
-        """Le panier en cours (non validé), ou None."""
-        for basket in self.baskets:
-            if not basket.closed:
-                return basket
-
-        return None
-
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.user_name}>"
