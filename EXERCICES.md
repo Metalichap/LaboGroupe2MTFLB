@@ -127,7 +127,7 @@ minutes, feuille blanche):
 5. un controller avec `@auth_required` + `@inject` et le motif POST/Redirect/GET;
 6. un seeder avec `order` et le test d'idempotence.
 
-Comparez ensuite avec [`readme.md`](readme_exemple.md) (l'aide-mémoire) et notez ce que
+Comparez ensuite avec [`readme.md`](readme.md) (l'aide-mémoire) et notez ce que
 vous avez oublié: c'est exactement ce qu'il faudra revérifier pendant le projet.
 
 **Critère de réussite** — vous savez écrire les six squelettes sans copier-coller.
