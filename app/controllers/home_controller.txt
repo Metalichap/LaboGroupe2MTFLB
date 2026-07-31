@@ -10,6 +10,9 @@ Ce qu'un controller ne fait JAMAIS: une requête SQL, un calcul métier, ou du
 formatage compliqué. Le premier va dans le service, le deuxième dans le modèle,
 le troisième dans le template.
 """
+
+
+
 from flask import render_template
 
 from app import app
