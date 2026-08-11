@@ -42,6 +42,7 @@ class User(BaseEntity, db.Model):
     equipments = db.relationship('Equipment', back_populates='user')
     knowledge_articles = db.relationship('KnowledgeArticle', back_populates='author')
     satisfaction_surveys = db.relationship('SatisfactionSurvey', back_populates='client')
+    interventions = db.relationship('Intervention', back_populates='technician')
 
     # --- logique métier -----------------------------------------------------
     # Un modèle n'est pas qu'un sac de colonnes: les règles qui ne concernent

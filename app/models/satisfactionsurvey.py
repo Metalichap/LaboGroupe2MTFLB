@@ -8,7 +8,7 @@ class SatisfactionSurvey(BaseEntity, db.Model):
 
     __tablename__ = "satisfactionsurveys"
 
-    survey_id = db.Column(db.Integer, primary_key=True)
+    survey_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     survey_rating = db.Column(db.Integer, nullable=False)
     survey_comment = db.Column(db.Text)
     ticket_id = db.Column(db.ForeignKey('tickets.ticket_id'), unique=True, nullable=False)

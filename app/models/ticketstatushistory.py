@@ -9,7 +9,7 @@ class TicketStatusHistory(BaseEntity, db.Model):
 
     __tablename__ = "ticketstatushistories"
 
-    history_id = db.Column(db.Integer, primary_key=True)
+    history_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ticket_id = db.Column(db.ForeignKey('tickets.ticket_id'), nullable=False)
     user_id = db.Column(db.ForeignKey('users.user_id'), nullable=False)
     old_status = db.Column(db.Enum(TicketStatus))
