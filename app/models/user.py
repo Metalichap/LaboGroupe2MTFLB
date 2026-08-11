@@ -57,6 +57,12 @@ class User(BaseEntity, db.Model):
         user_role.user = self
         self.roles.append(user_role)
 
+    def get_roles(self):
+        """ """
+        return self.roles
+
+
+
     def remove_role(self, role: Role):
         """Retire un rôle s'il est présent."""
         for user_role in self.roles:
