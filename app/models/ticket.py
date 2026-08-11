@@ -26,9 +26,9 @@ class Ticket(BaseEntity, db.Model):
     category_id = db.Column(db.ForeignKey('categories.category_id'), nullable=False)
     priority_id = db.Column(db.ForeignKey('priorities.priority_id'), nullable=False)
     equipment_id = db.Column(db.ForeignKey('equipments.equipment_id'), nullable=True)
-
-    author = db.relationship('User', back_populates='tickets_created')
-    technician = db.relationship('User', back_populates='tickets_assigned')
+    
+    author = db.relationship('User',foreign_keys=[author_id],back_populates='tickets_created')
+    technician = db.relationship('User',foreign_keys=[technician_id],back_populates='tickets_assigned'    )
     category = db.relationship('Category', back_populates='tickets')
     priority = db.relationship('Priority', back_populates='tickets')
     equipments = db.relationship('Equipment', back_populates='tickets')

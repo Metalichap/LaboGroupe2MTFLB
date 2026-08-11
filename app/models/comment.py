@@ -12,5 +12,5 @@ class Comment(BaseEntity, db.Model):
     author_id = db.Column(db.ForeignKey('users.user_id'))
     ticket_id = db.Column(db.ForeignKey('tickets.ticket_id'))
 
-    tickets = db.relationship("Ticket", back_populates="comments")
+    ticket = db.relationship("Ticket", back_populates="comments")
     author = db.relationship("User", back_populates="comments")

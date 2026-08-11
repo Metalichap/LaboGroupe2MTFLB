@@ -34,8 +34,8 @@ class User(BaseEntity, db.Model):
     team = db.relationship('Team', back_populates='members')
     site = db.relationship('Site', back_populates='users')
 
-    tickets_created = db.relationship('Ticket', back_populates='author')
-    tickets_assigned = db.relationship('Ticket', back_populates='technician')
+    tickets_created = db.relationship('Ticket',foreign_keys='Ticket.author_id', back_populates='author')
+    tickets_assigned = db.relationship('Ticket',foreign_keys='Ticket.technician_id', back_populates='technician')
 
     comments = db.relationship('Comment', back_populates='author')
     ticket_status_histories = db.relationship('TicketStatusHistory', back_populates='user')
