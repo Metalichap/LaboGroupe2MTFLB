@@ -11,7 +11,7 @@ class Role(BaseEntity, db.Model):
 
     __tablename__ = "roles"
 
-    role_id = db.Column(db.Integer, primary_key=True)
+    role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # index=True: on cherche souvent un rôle par son nom (seeds, contrôles)
     role_name = db.Column(db.String(50), nullable=False, unique=True, index=True)
 

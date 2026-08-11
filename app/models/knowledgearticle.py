@@ -8,7 +8,7 @@ class KnowledgeArticle(BaseEntity, db.Model):
 
     __tablename__ = "knowledgesarticles"
 
-    article_id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     article_title = db.Column(db.String(255), nullable=False)
     article_content = db.Column(db.Text)
     category_id = db.Column(db.ForeignKey('categories.category_id'))

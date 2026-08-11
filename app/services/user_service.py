@@ -8,7 +8,6 @@ from app.forms.user.user_register_form import UserRegisterForm
 from app.forms.user.user_update_form import UserUpdateForm
 from app.framework.decorators.injectable import injectable
 from app.mappers.user_mapper import UserMapper
-from app.models.basket import Basket
 from app.models.role import Role
 from app.models.user import User
 from app.services.base_service import BaseService
@@ -53,15 +52,13 @@ class UserService(BaseService):
 
         # Le mapper a mis le mot de passe en clair, on le remplace par son hash
         # AVANT tout contact avec la base.
-        user.password = self.__hasher.hash(user.password)
+        user.user_password = self.__hasher.hash(user.user_password)
 
         # Tout nouveau compte est un simple USER...
         role_user = Role.query.filter_by(role_name="USER").first()
         if role_user is not None:
             user.add_role(role_user)
 
-        # ... et démarre avec un panier vide ouvert.
-        user.baskets.append(Basket())
 
         try:
             db.session.add(user)
@@ -125,7 +122,7 @@ class UserService(BaseService):
         if user is None:
             return None
 
-        user.password = self.__hasher.hash(plain_password)
+        user.user_password = self.__hasher.hash(plain_password)
 
         try:
             db.session.commit()
@@ -213,15 +210,15 @@ class UserService(BaseService):
         try:
             # verify() lève une exception si ça ne correspond pas,
             # elle ne retourne pas False.
-            self.__hasher.verify(user.password, candidate.password)
+            self.__hasher.verify(user.user_password, candidate.password)
         except (VerifyMismatchError, VerificationError, InvalidHashError):
             return None
 
         # argon2 évolue (paramètres de coût plus élevés avec le temps):
         # si le hash stocké est obsolète, on le remplace maintenant qu'on a le
         # mot de passe en clair sous la main.
-        if self.__hasher.check_needs_rehash(user.password):
-            user.password = self.__hasher.hash(candidate.password)
+        if self.__hasher.check_needs_rehash(user.user_password):
+            user.user_password = self.__hasher.hash(candidate.password)
             db.session.commit()
 
         return UserMapper.entity_to_dto(user)

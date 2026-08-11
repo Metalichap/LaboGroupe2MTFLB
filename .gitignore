@@ -8,3 +8,8 @@ init_db/*
 __pycache__
 *.pyc
 
+# vscode
+.vscode/
+
+# python
+.venv/

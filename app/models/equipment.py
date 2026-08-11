@@ -9,7 +9,7 @@ class Equipment(BaseEntity, db.Model):
     """
     __tablename__ = "equipments"
 
-    equipment_id = db.Column(db.Integer, primary_key=True)
+    equipment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     equipment_name = db.Column(db.String(255))
     equipment_type = db.Column(db.String(127))
     equipment_serial = db.Column(db.String(127), unique=True, nullable=False, index=True)

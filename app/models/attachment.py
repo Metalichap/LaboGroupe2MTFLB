@@ -8,7 +8,7 @@ class Attachment(BaseEntity, db.Model):
 
     __tablename__ = "attachments"
 
-    attachment_id = db.Column(db.Integer, primary_key=True)
+    attachment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     attachment_filename = db.Column(db.String(255), nullable=False)
     attachment_path = db.Column(db.Text, nullable=True)
     attachment_size = db.Column(db.Integer)
