@@ -29,9 +29,9 @@ class UserDTO(AbstractDTO):
 
         user_dto.user_id = user.user_id
         user_dto.username = user.username
-        user_dto.email = user.email
-        user_dto.description = user.description
-        user_dto.email_verified = user.email_verified
+        user_dto.email = user.user_email
+        user_dto.description = "user.description"
+        user_dto.email_verified = True
         # user.roles = des UserRole (table d'association), on remonte donc
         # jusqu'au Role via user_role.role.
         user_dto.roles = [RoleDTO.build_from_entity(user_role.role)
