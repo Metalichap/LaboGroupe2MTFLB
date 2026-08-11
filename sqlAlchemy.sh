@@ -19,3 +19,4 @@ then
 else
   $DB_CMD
 fi
+
