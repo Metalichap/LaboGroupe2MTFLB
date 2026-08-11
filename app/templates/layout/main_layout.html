@@ -39,7 +39,7 @@
                     <a class="nav-link" href="{{ url_for('index') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('item_list') }}">Boutique</a>
+                    <a class="nav-link" href="">Boutique</a>
                 </li>
                 {% if current_user and current_user.is_admin() %}
                     {# Ces liens ne sont pas la sécurité: ils sont juste cachés.
