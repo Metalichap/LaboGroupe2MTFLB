@@ -65,16 +65,19 @@ class User(BaseEntity, db.Model):
 
     def remove_role(self, role: Role):
         """Retire un rôle s'il est présent."""
-        for user_role in self.roles:
+        for user_role in self.roles: # TODO : Check Warning ?
             if user_role.role.role_name == role.role_name:
                 self.roles.remove(user_role)
                 break
 
     def role_names(self) -> list[str]:
-        return [user_role.role.role_name for user_role in self.roles]
+        return [user_role for user_role in self.roles.role.role_name]
+
+    def has_role(self, role : str):
+        return role in self.roles.role.role_name
 
     def is_admin(self) -> bool:
-        return "ADMIN" in self.role_names()
+        return self.has_role("ADMIN")
 
     def __repr__(self):
         return f"<User {self.user_name}>"
