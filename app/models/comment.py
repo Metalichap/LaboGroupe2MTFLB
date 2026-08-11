@@ -14,3 +14,4 @@ class Comment(BaseEntity, db.Model):
 
     ticket = db.relationship("Ticket", back_populates="comments")
     author = db.relationship("User", back_populates="comments")
+
