@@ -1,4 +1,4 @@
-# LaboGroupe2
+# Mon Petit Projet
 
 * Metalichap - François
 * maxdbxl - Maxime
