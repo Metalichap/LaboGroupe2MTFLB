@@ -14,33 +14,30 @@ class UserSeed(Seedable):
 
     order = 20
 
-    # (username, mot de passe en clair, email, description, rôles)
+    # (username, mot de passe en clair, email, user_firstname, user_lastname, rôles)
     USERS = [
-        ("admin", "admin", "admin@example.com", "Compte administrateur de démo",
+        ("admin", "admin", "admin@example.com", "Roboute", "Guilliman",
          ["USER", "ADMIN"]),
-        ("test", "test", "test@example.com", "Compte utilisateur de démo",
+        ("test", "test", "test@example.com", "Toto", "tutu",
          ["USER"]),
     ]
 
     def seed(self):
         hasher = PasswordHasher()
 
-        for username, password, email, description, role_names in self.USERS:
+        for username, password, email, user_firstname, user_lastname, role_names in self.USERS:
             if User.query.filter_by(username=username).first() is not None:
                 app.logger.debug(f"Seed user {username}: déjà présent")
                 continue
 
             user = User(username=username,
-                        email=email,
-                        description=description,
-                        # Comptes de démonstration: adresse considérée comme
-                        # vérifiée, sinon /seed obligerait à passer par Mailpit
-                        # avant de pouvoir tester la moindre commande.
-                        email_verified=True,
+                        user_email=email,
                         # Jamais de mot de passe en clair en base, même pour un
                         # jeu de données de test: on prend les mêmes habitudes
                         # partout.
-                        password=hasher.hash(password))
+                        user_password=hasher.hash(password),
+                        user_firstname=user_firstname,
+                        user_lastname=user_lastname)
 
             # add() AVANT d'attribuer les rôles: sans ça, la requête
             # Role.query.filter_by(...) de la boucle déclenche un autoflush
