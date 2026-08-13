@@ -1,6 +1,6 @@
 from app.dtos.abstract_dto import AbstractDTO
 from app.dtos.role_dto import RoleDTO
-from app.models import RoleStatus
+from app.models.role import RoleStatus
 
 
 class UserDTO(AbstractDTO):

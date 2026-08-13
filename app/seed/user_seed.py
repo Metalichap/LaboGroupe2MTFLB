@@ -2,7 +2,8 @@ from argon2 import PasswordHasher
 
 from app import app, db
 from app.framework.seed import Seedable
-from app.models import Role, RoleStatus, User
+from app.models.role import Role, RoleStatus
+from app.models.user import User
 
 
 class UserSeed(Seedable):
