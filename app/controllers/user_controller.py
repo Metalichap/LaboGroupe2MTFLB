@@ -28,7 +28,7 @@ from app.services.auth_service import AuthService
 from app.services.email_verification_service import EmailVerificationService
 from app.services.password_reset_service import PasswordResetService
 from app.services.user_service import UserService
-
+from app.errors import MissingDataException
 
 # --- authentification -------------------------------------------------------
 
@@ -155,6 +155,8 @@ def password_forgot(password_reset_service: PasswordResetService,
     form = UserForgotPasswordForm()
 
     if form.validate_on_submit():
+        if form.email.data is None:
+            raise MissingDataException("missing email !")
         password_reset_service.send_reset_link(form.email.data)
 
         # Message IDENTIQUE que l'adresse existe ou non, et on ignore
@@ -182,6 +184,8 @@ def password_reset(token: str, password_reset_service: PasswordResetService):
     form = UserResetPasswordForm()
 
     if form.validate_on_submit():
+        if form.password.data is None:
+            raise MissingDataException("missing password !")
         # Le service revalide le token: entre l'affichage du formulaire et
         # l'envoi, il a pu expirer ou être consommé ailleurs.
         if password_reset_service.reset(token, form.password.data):
@@ -248,6 +252,10 @@ def user_update(user_id: int, user_service: UserService, auth_service: AuthServi
     # obj=user pré-remplit les champs de même nom en GET.
     form = UserUpdateForm(obj=user)
     current_user = auth_service.get_current_user()
+
+    if current_user is None:
+        flash("Utilisateur introuvable.", "warning")
+        return redirect(url_for('index'))
 
     if form.validate_on_submit():
         updated = user_service.update(user_id, form)
