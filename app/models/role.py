@@ -4,7 +4,7 @@ import enum
 
 class RoleStatus(enum.Enum):
     CLIENT = "CLIENT"
-    TECHNICIEN = "TECHNICIEN"
+    TECHNICIAN = "TECHNICIAN"
     ADMIN = "ADMIN"
 
 class Role(BaseEntity, db.Model):
