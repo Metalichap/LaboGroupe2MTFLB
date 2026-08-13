@@ -69,7 +69,7 @@ def auth_required(level = None, or_is_current_user: bool =False):
                     f"`user_id` (venant de l'URL), sinon la règle de propriété "
                     f"ne peut jamais s'appliquer.")
 
-            if level == RoleStatus.CLIENT:
+            if level != RoleStatus.ADMIN:
                 raise ValueError(
                     f"auth_required(level=\"USER\", or_is_current_user=True) sur "
                     f"{func.__name__}(): tout utilisateur connecté a le rôle "
