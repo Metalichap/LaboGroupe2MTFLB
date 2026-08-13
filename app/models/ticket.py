@@ -40,6 +40,3 @@ class Ticket(BaseEntity, db.Model):
     attachments = db.relationship('Attachment', back_populates='ticket')
     survey = db.relationship('SatisfactionSurvey', back_populates='ticket')
 
-
-    
-
