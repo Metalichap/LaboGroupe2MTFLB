@@ -1,5 +1,6 @@
 # Keep it up to date for every new controller and route
 from app.controllers.home_controller import index
+from app.controllers.comment_controller import comment_add
 from app.controllers.user_controller import (
     login,
     logout,
@@ -29,4 +30,5 @@ __all__ = [
     "profile",
     "user_update",
     "user_delete",
+	"comment_add",
 ]
