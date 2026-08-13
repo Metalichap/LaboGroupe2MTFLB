@@ -72,10 +72,10 @@ class User(BaseEntity, db.Model):
                 break
 
     def role_names(self) -> list[str]:
-        return [user_role for user_role in self.roles.role.role_name]
+        return [user_role.role.role_name for user_role in self.roles]
 
-    def has_role(self, role : str):
-        return role in self.roles.role.role_name
+    def has_role(self, role: str) -> bool:
+        return role in self.role_names()
 
     def is_admin(self) -> bool:
         return self.has_role("ADMIN")
