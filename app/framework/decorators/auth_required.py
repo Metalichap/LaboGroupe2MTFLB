@@ -5,7 +5,7 @@ from flask import flash, redirect, request, url_for
 
 from app.framework.decorators.inject import inject
 from app.services.auth_service import AuthService
-from app.models import RoleStatus
+from app.models.role import RoleStatus
 
 
 def auth_required(level = None, or_is_current_user: bool =False):

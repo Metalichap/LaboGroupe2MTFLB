@@ -1,7 +1,6 @@
 from app import app, db
 from app.framework.seed import Seedable
-from app.models.role import Role
-from app.models import RoleStatus
+from app.models.role import Role, RoleStatus
 
 class RoleSeed(Seedable):
     """Les rôles de l'application.
