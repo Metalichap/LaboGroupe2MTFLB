@@ -2,8 +2,7 @@ from argon2 import PasswordHasher
 
 from app import app, db
 from app.framework.seed import Seedable
-from app.models.role import Role
-from app.models.user import User
+from app.models import Role, RoleStatus, User
 
 
 class UserSeed(Seedable):
@@ -17,9 +16,9 @@ class UserSeed(Seedable):
     # (username, mot de passe en clair, email, user_firstname, user_lastname, rôles)
     USERS = [
         ("admin", "admin", "admin@example.com", "Roboute", "Guilliman",
-         ["USER", "ADMIN"]),
+         [RoleStatus.CLIENT, RoleStatus.ADMIN]),
         ("test", "test", "test@example.com", "Toto", "tutu",
-         ["USER"]),
+         [RoleStatus.CLIENT]),
     ]
 
     def seed(self):
