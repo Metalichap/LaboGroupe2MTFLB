@@ -80,4 +80,4 @@ class User(BaseEntity, db.Model):
         return self.has_role("ADMIN")
 
     def __repr__(self):
-        return f"<User {self.user_name}>"
+        return f"<User {self.username}>"
