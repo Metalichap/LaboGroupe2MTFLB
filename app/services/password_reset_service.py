@@ -56,7 +56,7 @@ class PasswordResetService:
         Retourne False si l'adresse est inconnue — mais le controller répond la
         même chose dans les deux cas, pour ne pas révéler qui a un compte.
         """
-        user = self.__user_service.find_one_by(email=email, active=True)
+        user = self.__user_service.find_one_by(user_email=email, active=True)
 
         if user is None:
             app.logger.info(f"reset: aucune adresse {email}")
@@ -64,12 +64,15 @@ class PasswordResetService:
 
         token = self.__serializer.dumps({
             'user_id': user.user_id,
-            'fingerprint': self.__fingerprint(user.password),
+            'fingerprint': self.__fingerprint(user.user_password),
         })
 
         # _external=True: une URL absolue (http://host/...), indispensable dans
         # un mail — un lien relatif n'y veut rien dire.
         link = url_for('password_reset', token=token, _external=True)
+        # Fonctionne parfois, parfois pas
+        # app.logger.warning(f"############### \n {link} \n ###############")
+        # app.logger.warning("hello")
 
         body = render_template('emails/password_reset.txt',
                                username=user.username,
@@ -77,7 +80,7 @@ class PasswordResetService:
                                minutes=self.__max_age // 60)
 
         return self.__mail_service.send(
-            user.email, "Réinitialisation de votre mot de passe", body)
+            user.user_email, "Réinitialisation de votre mot de passe", body)
 
     # --- vérification / application -----------------------------------------
 
@@ -121,7 +124,7 @@ class PasswordResetService:
         # compare_digest au lieu de ==: comparaison à temps constant, elle ne
         # laisse pas deviner l'empreinte attendue caractère par caractère.
         if not compare_digest(data.get('fingerprint', ''),
-                              self.__fingerprint(user.password)):
+                              self.__fingerprint(user.user_password)):
             app.logger.info("reset: token déjà utilisé (mot de passe modifié)")
             return None
 
