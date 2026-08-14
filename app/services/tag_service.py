@@ -29,7 +29,7 @@ class TagService(BaseService):
 
 
 
-    def insert(self, form: TagForm):
+    def insert(self, form: TagForm) -> TagDTO | None:
         tag = Tag()
         TagMapper.form_to_entity(form, tag)
 
@@ -44,7 +44,7 @@ class TagService(BaseService):
         return TagMapper.entity_to_dto(tag)
 
 
-    def update(self, entity_id: int, form : TagForm):
+    def update(self, entity_id: int, form : TagForm) -> TagDTO | None:
         tag = self.find_one_entity(entity_id)
 
         if tag is None:
@@ -61,7 +61,7 @@ class TagService(BaseService):
 
         return TagMapper.entity_to_dto(tag)
 
-    def delete(self, entity_id: int):
+    def delete(self, entity_id: int) -> int | None:
         tag = self.find_one_entity(entity_id)
 
         if tag is None:
