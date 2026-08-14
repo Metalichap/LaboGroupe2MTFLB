@@ -69,6 +69,6 @@ class UserRegisterForm(FlaskForm):
         validators=[DataRequired(), Length(min=2, max=64)]
     )
     lastname = StringField(
-        'Prénom',
+        'Nom',
         validators=[DataRequired(), Length(min=2, max=64)]
     )
