@@ -71,12 +71,4 @@ class UserRegisterForm(FlaskForm):
         EqualTo('confirm', message='Les mots de passe ne correspondent pas!')]
     )
     confirm = PasswordField('Confirmation', validators=[DataRequired()])
-    # Nouveau champs pour le nom et prénom
-    firstname = StringField(
-        'Prénom',
-        validators=[DataRequired(), Length(min=2, max=64)]
-    )
-    lastname = StringField(
-        'Nom',
-        validators=[DataRequired(), Length(min=2, max=64)]
-    )
+    description = TextAreaField('Description', validators=[Length(max=255)])
