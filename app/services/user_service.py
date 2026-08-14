@@ -12,6 +12,7 @@ from app.mappers.user_mapper import UserMapper
 from app.models.role import Role, RoleStatus
 from app.models.user import User
 from app.services.base_service import BaseService
+from app.models import RoleStatus
 
 
 @injectable
@@ -40,7 +41,7 @@ class UserService(BaseService):
     def find_one_entity(self, entity_id: int) -> User | None:
         return User.query.filter_by(user_id=entity_id).first()
 
-    def find_one_by(self, **kwargs) -> User | None:
+    def find_one_by(self, **kwargs: dict[str, Any]) -> User | None:
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
 
