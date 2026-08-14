@@ -3,7 +3,6 @@ from app.models.base_entity import BaseEntity
 from app.models.role import Role
 from app.models.user_role import UserRole
 
-
 class User(BaseEntity, db.Model):
     """Un utilisateur du site.
 

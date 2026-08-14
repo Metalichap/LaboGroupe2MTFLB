@@ -1,0 +1,47 @@
+{#
+    Fragment réutilisable: le tableau des catégories.
+
+    Nom préfixé d'un underscore par convention: ce n'est pas une page, elle
+    n'étend pas le layout et n'est jamais rendue seule.
+
+        {% include "categories/_category_table.html" %}
+
+    `categories` et `current_user` sont visibles ici via le contexte partagé
+    par `include`.
+#}
+{% from "macros/form_macros.html" import delete_button %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Description</th>
+                {% if current_user and current_user.is_admin() %}
+                    <th scope="col">Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+                <tr>
+                    <th scope="row">{{ category.category_id }}</th>
+                    <td>{{ category.category_name }}</td>
+                    <td>{{ category.category_description | truncate(60) }}</td>
+                    {% if current_user and current_user.is_admin() %}
+                        <td class="d-flex gap-1 flex-wrap">
+                            <a class="btn btn-sm btn-outline-primary"
+                               href="{{ url_for('category_update', category_id=category.category_id) }}">
+                                Éditer
+                            </a>
+                            {{ delete_button(url_for('category_delete', category_id=category.category_id)) }}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-muted">Aucune catégorie.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

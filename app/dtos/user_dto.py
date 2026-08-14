@@ -1,5 +1,6 @@
 from app.dtos.abstract_dto import AbstractDTO
 from app.dtos.role_dto import RoleDTO
+from app.models.role import RoleStatus
 
 
 class UserDTO(AbstractDTO):
@@ -21,7 +22,10 @@ class UserDTO(AbstractDTO):
         return [role.role_name for role in self.roles]
 
     def is_admin(self) -> bool:
-        return "ADMIN" in self.role_names()
+        return RoleStatus.ADMIN in self.role_names()
+    
+    def is_technician(self) -> bool:
+        return RoleStatus.TECHNICIAN in self.role_names()
 
     @staticmethod
     def build_from_entity(user) -> "UserDTO":

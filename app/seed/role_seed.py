@@ -1,7 +1,6 @@
 from app import app, db
 from app.framework.seed import Seedable
-from app.models.role import Role
-
+from app.models.role import Role, RoleStatus
 
 class RoleSeed(Seedable):
     """Les rôles de l'application.
@@ -12,13 +11,12 @@ class RoleSeed(Seedable):
 
     order = 10
 
-    ROLES = ["USER", "ADMIN"]
-
     def seed(self):
-        for role_name in self.ROLES:
+        for role_name in RoleStatus:
             # Idempotence: on ne recrée pas ce qui existe déjà. Sans ce test,
             # un deuxième appel à /seed violerait la contrainte unique sur
             # role_name et ferait échouer tout le seeding.
+            print(role_name)
             if Role.query.filter_by(role_name=role_name).first() is not None:
                 continue
 
