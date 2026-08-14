@@ -50,13 +50,15 @@ class EmailVerificationService:
         """Envoie (ou renvoie) le lien de vérification."""
         user = self.__user_service.find_one_entity(user_id)
 
-        if user is None or user.email_verified:
+        if user is None:
+        # user does not have an email_verified attribute
+        # if user is None or user.email_verified:
             # Déjà vérifié: ne rien envoyer. Et surtout ne pas le dire
             # différemment à l'appelant côté HTTP (voir le controller).
             return False
 
         token = self.__serializer.dumps({'user_id': user.user_id,
-                                         'email': user.email})
+                                         'email': user.user_email})
 
         link = url_for('email_verify', token=token, _external=True)
 
@@ -65,8 +67,7 @@ class EmailVerificationService:
                                link=link,
                                hours=self.__max_age // 3600)
 
-        return self.__mail_service.send(
-            user.email, "Confirmez votre adresse email", body)
+        return self.__mail_service.send(user.user_email, "Confirmez votre adresse email", body)
 
     # --- vérification -------------------------------------------------------
 
