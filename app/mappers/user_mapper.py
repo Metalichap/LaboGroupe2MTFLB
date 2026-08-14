@@ -4,15 +4,16 @@ from app.forms.user.user_register_form import UserRegisterForm
 from app.forms.user.user_update_form import UserUpdateForm
 from app.mappers.abstract_mapper import AbstractMapper
 from app.models.user import User
+from flask_wtf import FlaskForm
 
 
-class UserMapper(AbstractMapper):
+class UserMapper(AbstractMapper[UserDTO, User]):
     @staticmethod
     def entity_to_dto(entity: User) -> UserDTO:
         return UserDTO.build_from_entity(entity)
 
     @staticmethod
-    def form_to_entity(form, user: User) -> User:
+    def form_to_entity(form: FlaskForm, entity: User) -> User:
         """Reporte les champs du formulaire sur l'entité.
 
         Un seul mapper pour plusieurs formulaires: on regarde le type reçu.
@@ -24,20 +25,21 @@ class UserMapper(AbstractMapper):
         hashe juste après. Le mapper ne fait que traduire.
         """
         if isinstance(form, UserRegisterForm):
-            user.username = form.username.data
-            user.email = form.email.data
-            user.password = form.password.data
-            user.description = form.description.data or ""
+            entity.username = form.username.data
+            entity.user_email = form.email.data
+            entity.user_password = form.password.data
+            entity.user_firstname = form.firstname.data
+            entity.user_lastname = form.lastname.data
+
 
         elif isinstance(form, UserUpdateForm):
-            user.email = form.email.data
-            user.description = form.description.data or ""
+            entity.user_email = form.email.data
             # Les rôles ne sont PAS appliqués ici: c'est une opération
             # privilégiée, gérée par UserService.update après vérification des
             # droits de l'utilisateur connecté.
 
         elif isinstance(form, UserLoginForm):
-            user.username = form.username.data
-            user.password = form.password.data
+            entity.username = form.username.data
+            entity.user_password = form.password.data
 
-        return user
+        return entity
