@@ -19,6 +19,4 @@ class TagDTO(AbstractDTO) :
         return tag_dto
 
     def get_json_parsable(self):
-
         return self.__dict__
-
