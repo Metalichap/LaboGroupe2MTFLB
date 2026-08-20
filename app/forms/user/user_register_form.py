@@ -54,14 +54,6 @@ class UserRegisterForm(FlaskForm):
         'Email',
         validators=[DataRequired(), Email(), Length(max=120)]
     )
-    username = StringField(
-        'Pseudo d\'utilisateur',
-        validators=[DataRequired(), Length(min=3, max=80)]
-    )
-    email = EmailField(
-        'Email',
-        validators=[DataRequired(), Email(), Length(max=120)]
-    )
     # PasswordField = StringField dont la valeur n'est pas réaffichée.
     # *PASSWORD_VALIDATORS déballe la liste choisie par la ternaire ci-dessus,
     # et on y ajoute la comparaison avec le champ de confirmation.
