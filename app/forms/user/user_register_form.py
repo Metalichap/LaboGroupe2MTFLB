@@ -46,16 +46,37 @@ class UserRegisterForm(FlaskForm):
     (`required`) est du confort utilisateur, il est trivialement contournable.
     """
 
-    username = StringField('Nom d\'utilisateur',
-                           validators=[DataRequired(), Length(min=3, max=80)])
-    email = EmailField('Email',
-                       validators=[DataRequired(), Email(), Length(max=120)])
+    username = StringField(
+        'Pseudo d\'utilisateur',
+        validators=[DataRequired(), Length(min=3, max=80)]
+    )
+    email = EmailField(
+        'Email',
+        validators=[DataRequired(), Email(), Length(max=120)]
+    )
+    username = StringField(
+        'Pseudo d\'utilisateur',
+        validators=[DataRequired(), Length(min=3, max=80)]
+    )
+    email = EmailField(
+        'Email',
+        validators=[DataRequired(), Email(), Length(max=120)]
+    )
     # PasswordField = StringField dont la valeur n'est pas réaffichée.
     # *PASSWORD_VALIDATORS déballe la liste choisie par la ternaire ci-dessus,
     # et on y ajoute la comparaison avec le champ de confirmation.
-    password = PasswordField('Mot de passe',
-                             validators=[*PASSWORD_VALIDATORS,
-                                         EqualTo('confirm',
-                                                 message='Les mots de passe ne correspondent pas!')])
+    password = PasswordField(
+        'Mot de passe',
+        validators=[*PASSWORD_VALIDATORS,
+        EqualTo('confirm', message='Les mots de passe ne correspondent pas!')]
+    )
     confirm = PasswordField('Confirmation', validators=[DataRequired()])
-    description = TextAreaField('Description', validators=[Length(max=255)])
+    # Nouveau champs pour le nom et prénom
+    firstname = StringField(
+        'Prénom',
+        validators=[DataRequired(), Length(min=2, max=64)]
+    )
+    lastname = StringField(
+        'Nom',
+        validators=[DataRequired(), Length(min=2, max=64)]
+    )

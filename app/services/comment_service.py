@@ -44,6 +44,19 @@ class CommentService(BaseService):
 
         return CommentMapper.entity_to_dto(comment)
 
+    def find_by_ticket(self, ticket_id: int) -> list[CommentDTO]:
+        comments = (
+        Comment.query
+        .filter_by(
+            ticket_id=ticket_id,
+            active=True
+        )
+        .order_by(Comment.created_at.asc())
+        .all()
+    )
+        
+        return [ CommentMapper.entity_to_dto(comment)
+			for comment in comments ]
 
     def find_all(self):
         raise NotImplementedError

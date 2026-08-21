@@ -1,6 +1,7 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 
+from typing import Any
 from app import app, db
 from app.dtos.user_dto import UserDTO
 from app.forms.user.user_login_form import UserLoginForm
@@ -8,8 +9,9 @@ from app.forms.user.user_register_form import UserRegisterForm
 from app.forms.user.user_update_form import UserUpdateForm
 from app.framework.decorators.injectable import injectable
 from app.mappers.user_mapper import UserMapper
-from app.models.role import Role
 from app.models.user import User
+from app.models.role import Role, RoleStatus
+from app.models.user_role import UserRole
 from app.services.base_service import BaseService
 
 
@@ -39,9 +41,18 @@ class UserService(BaseService):
     def find_one_entity(self, entity_id: int) -> User | None:
         return User.query.filter_by(user_id=entity_id).first()
 
-    def find_one_by(self, **kwargs) -> User | None:
+    def find_one_by(self, **kwargs: dict[str, Any]) -> User | None:
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
+
+    def find_all_by_role(self, role_name: RoleStatus) -> list[UserDTO]:
+        """Tous les utilisateurs actifs pour un role donné.
+        basé sur l'énum
+        """
+        return [UserMapper.entity_to_dto(user)
+                for user in User.query.join(User.roles).join(UserRole.role)
+                                    .filter(Role.role_name == role_name, User.active == True)
+                                    .order_by(User.username).all()]
 
     # --- écriture -----------------------------------------------------------
 
@@ -55,10 +66,9 @@ class UserService(BaseService):
         user.user_password = self.__hasher.hash(user.user_password)
 
         # Tout nouveau compte est un simple USER...
-        role_user = Role.query.filter_by(role_name="USER").first()
+        role_user = Role.query.filter_by(role_name=RoleStatus.CLIENT).first()
         if role_user is not None:
             user.add_role(role_user)
-
 
         try:
             db.session.add(user)
@@ -204,13 +214,13 @@ class UserService(BaseService):
             # instantanément alors qu'un mauvais mot de passe prend ~50ms
             # permet de deviner quels comptes existent (timing attack).
             # On hashe donc dans le vide pour égaliser les temps de réponse.
-            self.__hasher.hash(candidate.password)
+            self.__hasher.hash(candidate.user_password)
             return None
 
         try:
             # verify() lève une exception si ça ne correspond pas,
             # elle ne retourne pas False.
-            self.__hasher.verify(user.user_password, candidate.password)
+            self.__hasher.verify(user.user_password, candidate.user_password)
         except (VerifyMismatchError, VerificationError, InvalidHashError):
             return None
 
@@ -218,7 +228,7 @@ class UserService(BaseService):
         # si le hash stocké est obsolète, on le remplace maintenant qu'on a le
         # mot de passe en clair sous la main.
         if self.__hasher.check_needs_rehash(user.user_password):
-            user.user_password = self.__hasher.hash(candidate.password)
+            user.user_password = self.__hasher.hash(candidate.user_password)
             db.session.commit()
 
         return UserMapper.entity_to_dto(user)
