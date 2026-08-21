@@ -36,6 +36,7 @@ if os.path.exists(env_path):
     load_dotenv(env_path, override=True)
 
 app = Flask("app")
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 # DEBUG=... dans le .env. Le debug active le rechargement automatique, les
 # pages d'erreur détaillées, la toolbar... et la route /seed (voir plus bas).
 # Ne JAMAIS le laisser à True en production: la console interactive de Werkzeug
