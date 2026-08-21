@@ -1,8 +1,8 @@
-"""Controller des catégories: listing, ajout, édition, suppression.
+"""Controller des tickets: listing, listing par technicien, création, édition.
 
 Même motif POST/Redirect/GET que dans user_controller.py.
 Accès simplement authentifié pour l'instant (@auth_required() sans niveau).
-La gestion des permissions (technicien, admin, ... ) sera fignolée avec Théo
+La gestion des permissions (technicien, admin, ... ) sera fignolée avec Théo.
 """
 from flask import flash, redirect, render_template, request, url_for
 
@@ -12,6 +12,7 @@ from app.forms.ticket.ticket_create_form import TicketCreateForm
 from app.forms.ticket.ticket_update_form import TicketUpdateForm
 from app.framework.decorators.auth_required import auth_required
 from app.framework.decorators.inject import inject
+from app.models.role import RoleStatus
 from app.models.ticket import TicketStatus
 from app.services.auth_service import AuthService
 from app.services.category_service import CategoryService
@@ -36,12 +37,15 @@ def _populate_category_and_priority_choices(form, category_service: CategoryServ
 @app.get('/tickets')
 @auth_required()  # TODO: probablement réservé aux techniciens/admins plus tard
 @inject
-def ticket_list(ticket_service: TicketService):
-    return render_template('tickets/list.html', tickets=ticket_service.find_all())
+def ticket_list(ticket_service: TicketService, user_service: UserService):
+    return render_template('tickets/list.html',
+                          tickets=ticket_service.find_all(),
+                          technicians=user_service.find_all_by_role(RoleStatus.TECHNICIAN),
+                          selected_technician_id=None)
 
 
 @app.get('/tickets/technician/<int:technician_id>')
-@auth_required()  # TODO: probablement réservé au technicien concerné ou à un admin
+@auth_required()  # TODO: Limit access
 @inject
 def ticket_list_by_technician(technician_id: int, ticket_service: TicketService,
                               user_service: UserService):
@@ -53,7 +57,11 @@ def ticket_list_by_technician(technician_id: int, ticket_service: TicketService,
 
     tickets = ticket_service.find_all_by_technician(technician_id)
 
-    return render_template('tickets/list.html', tickets=tickets, technician=technician)
+    return render_template('tickets/list.html',
+                          tickets=tickets,
+                          technician=technician,
+                          technicians=user_service.find_all_by_role(RoleStatus.TECHNICIAN),
+                          selected_technician_id=technician_id)
 
 
 # --- création -------------------------------------------------------------
@@ -87,7 +95,7 @@ def ticket_add(ticket_service: TicketService, category_service: CategoryService,
             flash("Ticket créé.", "success")
             return redirect(url_for('ticket_list'))
 
-    return render_template('tickets/add_or_update.html', form=form, ticket=None)
+    return render_template('tickets/add.html', form=form)
 
 
 # --- édition ----------------------------------------------------------------
@@ -115,7 +123,7 @@ def ticket_update(ticket_id: int, ticket_service: TicketService,
     # pour "non assigné".
     form.technician_id.choices = [('', '-- Non assigné --')] + [
         (str(technician.user_id), technician.username)
-        for technician in user_service.find_all_technicians()
+        for technician in user_service.find_all_by_role(RoleStatus.TECHNICIAN)
     ]
 
     if form.validate_on_submit():
@@ -135,4 +143,4 @@ def ticket_update(ticket_id: int, ticket_service: TicketService,
         form.ticket_status.data = ticket.ticket_status.name if ticket.ticket_status else None
         form.technician_id.data = str(ticket.technician_id) if ticket.technician_id else ''
 
-    return render_template('tickets/add_or_update.html', form=form, ticket=ticket)
+    return render_template('tickets/update.html', form=form, ticket=ticket)

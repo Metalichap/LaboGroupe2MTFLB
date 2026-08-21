@@ -1,0 +1,74 @@
+{#
+    Fragment réutilisable: le tableau des tickets, avec un filtre optionnel
+    par technicien.
+
+        {% include "tickets/_ticket_table.html" %}
+
+    `tickets`, `current_user` sont visibles ici via le contexte partagé par
+    `include`. `technicians` et `selected_technician_id` sont optionnels: si
+    absents, le filtre ne s'affiche pas (fragment réutilisable même sans
+    filtre actif).
+#}
+
+{% if technicians is defined %}
+    {#
+        Filtre par technicien: un <select> qui redirige au changement, pas un
+        vrai <form>. technician_id est un segment d'URL (pas une donnée
+        postée), donc pas de CSRF ni de POST nécessaires ici — juste une
+        navigation GET.
+    #}
+    <div class="mb-3 col-md-4">
+        <label class="form-label" for="technician-filter">Filtrer par technicien</label>
+        <select id="technician-filter" class="form-select"
+                onchange="if (this.value) location.href = this.value;">
+            <option value="{{ url_for('ticket_list') }}"
+                    {{ 'selected' if selected_technician_id is none else '' }}>
+                Tous les tickets
+            </option>
+            {% for technician in technicians %}
+                <option value="{{ url_for('ticket_list_by_technician', technician_id=technician.user_id) }}"
+                        {{ 'selected' if selected_technician_id == technician.user_id else '' }}>
+                    {{ technician.username }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Titre</th>
+                <th scope="col">Statut</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Priorité</th>
+                <th scope="col">Technicien</th>
+                <th scope="col">Échéance</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <th scope="row">{{ ticket.ticket_id }}</th>
+                    <td>{{ ticket.ticket_title }}</td>
+                    <td><span class="badge bg-secondary">{{ ticket.ticket_status }}</span></td>
+                    <td>{{ ticket.category_name }}</td>
+                    <td>{{ ticket.priority_name }}</td>
+                    <td>{{ ticket.technician_username or '—' }}</td>
+                    <td>{{ ticket.ticket_due_date.strftime('%d/%m/%Y') if ticket.ticket_due_date else '—' }}</td>
+                    <td class="d-flex gap-1 flex-wrap">
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{{ url_for('ticket_update', ticket_id=ticket.ticket_id) }}">
+                            Éditer
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8" class="text-muted">Aucun ticket.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
