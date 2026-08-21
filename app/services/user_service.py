@@ -8,8 +8,9 @@ from app.forms.user.user_register_form import UserRegisterForm
 from app.forms.user.user_update_form import UserUpdateForm
 from app.framework.decorators.injectable import injectable
 from app.mappers.user_mapper import UserMapper
-from app.models.role import Role
 from app.models.user import User
+from app.models.role import Role, RoleStatus
+from app.models.user_role import UserRole
 from app.services.base_service import BaseService
 
 
@@ -43,6 +44,15 @@ class UserService(BaseService):
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
 
+    def find_all_by_role(self, role_name: RoleStatus) -> list[UserDTO]:
+        """Tous les utilisateurs actifs pour un role donné.
+        basé sur l'énum
+        """
+        return [UserMapper.entity_to_dto(user)
+                for user in User.query.join(User.roles).join(UserRole.role)
+                                    .filter(Role.role_name == role_name, User.active == True)
+                                    .order_by(User.username).all()]
+
     # --- écriture -----------------------------------------------------------
 
     def insert(self, form: UserRegisterForm) -> UserDTO | None:
@@ -54,8 +64,8 @@ class UserService(BaseService):
         # AVANT tout contact avec la base.
         user.user_password = self.__hasher.hash(user.user_password)
 
-        # Tout nouveau compte est un simple USER...
-        role_user = Role.query.filter_by(role_name="USER").first()
+        # Tout nouveau compte est un simple CLIENT...
+        role_user = Role.query.filter_by(role_name="CLIENT").first()
         if role_user is not None:
             user.add_role(role_user)
 
