@@ -1,0 +1,14 @@
+{% extends "layout/main_layout.html" %}
+{% block title %}{{ 'Tickets de ' ~ technician.username if technician is defined else 'Tickets' }}{% endblock %}
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            {{ 'Tickets de ' ~ technician.username if technician is defined else 'Tickets' }}
+        </h1>
+        {% if current_user %}
+            <a class="btn btn-primary" href="{{ url_for('ticket_add') }}">Nouveau ticket</a>
+        {% endif %}
+    </div>
+
+    {% include "tickets/_ticket_table.html" %}
+{% endblock %}
