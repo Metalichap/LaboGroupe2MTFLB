@@ -14,7 +14,6 @@ from app.models.user import User
 from app.models.role import Role, RoleStatus
 from app.models.user_role import UserRole
 from app.services.base_service import BaseService
-from app.models import RoleStatus
 
 
 @injectable
