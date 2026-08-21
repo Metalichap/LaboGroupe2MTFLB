@@ -13,7 +13,7 @@ from app.mappers.attachment_mapper import AttachmentMapper
 from app.models.attachment import Attachment
 from app.models.ticket import Ticket
 from app.services.base_service import BaseService
-
+from app.services.ticket_service import TicketService
 
 @injectable
 class AttachmentService(BaseService):
@@ -29,9 +29,10 @@ class AttachmentService(BaseService):
         if ticket is None or not ticket.active:
             return None
 
-        # un check pour voir si l'utilisateur peut acceder au tickets?
+        if not TicketService.is_authorised(ticket, current_user):
+                    return None
         
-        file: FileStorage = form.file.data
+        file = form.file.data
 
         if file is None:
             return None
@@ -60,7 +61,7 @@ class AttachmentService(BaseService):
 
         upload_path = Path(app.instance_path) / "attachments"
 
-        Path(upload_path).mkdir(parents=True, exist_ok=True)
+        upload_path.mkdir(parents=True, exist_ok=True)
 
         file_path = upload_path / storage_filename
 
@@ -92,7 +93,16 @@ class AttachmentService(BaseService):
 
     def find_by_ticket(self,
                        ticket_id: int,
-                       current_user: UserDTO):
+                       current_user: UserDTO) -> list[AttachmentDTO]:
+
+        ticket = db.session.get(Ticket, ticket_id)
+
+        if ticket is None or not ticket.active:
+            return []
+
+        if not TicketService.is_authorised(ticket, current_user):
+            return []
+        
         attachments = Attachment.query.filter_by(
             ticket_id=ticket_id,
             active=True

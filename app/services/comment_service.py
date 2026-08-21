@@ -8,6 +8,7 @@ from app.mappers.comment_mapper import CommentMapper
 from app.models.comment import Comment
 from app.models.ticket import Ticket
 from app.services.base_service import BaseService
+from app.services.ticket_service import TicketService
 
 
 @injectable
@@ -24,7 +25,8 @@ class CommentService(BaseService):
         if ticket is None or not ticket.active:
             return None
 
-        # un check pour voir si l'utilisateur peut acceder au tickets?
+        if not TicketService.is_authorised(ticket, current_user):
+            return None
 
         comment = Comment()
 
@@ -44,7 +46,17 @@ class CommentService(BaseService):
 
         return CommentMapper.entity_to_dto(comment)
 
-    def find_by_ticket(self, ticket_id: int) -> list[CommentDTO]:
+    def find_by_ticket(self,
+                       ticket_id: int,
+                       current_user: UserDTO) -> list[CommentDTO]:
+        ticket = db.session.get(Ticket, ticket_id)
+        
+        if ticket is None or not ticket.active:
+            return None
+
+        if not TicketService.is_authorised(ticket, current_user):
+            return []
+
         comments = (
         Comment.query
         .filter_by(
