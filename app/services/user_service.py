@@ -11,6 +11,8 @@ from app.framework.decorators.injectable import injectable
 from app.mappers.user_mapper import UserMapper
 from app.models.role import Role, RoleStatus
 from app.models.user import User
+from app.models.role import Role, RoleStatus
+from app.models.user_role import UserRole
 from app.services.base_service import BaseService
 
 
@@ -43,6 +45,15 @@ class UserService(BaseService):
     def find_one_by(self, **kwargs: dict[str, Any]) -> User | None:
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
+
+    def find_all_by_role(self, role_name: RoleStatus) -> list[UserDTO]:
+        """Tous les utilisateurs actifs pour un role donné.
+        basé sur l'énum
+        """
+        return [UserMapper.entity_to_dto(user)
+                for user in User.query.join(User.roles).join(UserRole.role)
+                                    .filter(Role.role_name == role_name, User.active == True)
+                                    .order_by(User.username).all()]
 
     # --- écriture -----------------------------------------------------------
 
