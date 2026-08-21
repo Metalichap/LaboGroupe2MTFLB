@@ -140,7 +140,7 @@ def ticket_update(ticket_id: int, ticket_service: TicketService,
 
     # En GET, préremplir le statut et le technicien actuels dans les selects.
     if request.method == 'GET':
-        form.ticket_status.data = ticket.ticket_status.name if ticket.ticket_status else None
+        form.ticket_status.data = ticket.ticket_status if ticket.ticket_status else None
         form.technician_id.data = str(ticket.technician_id) if ticket.technician_id else ''
 
     return render_template('tickets/update.html', form=form, ticket=ticket)
