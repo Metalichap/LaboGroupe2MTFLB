@@ -2,11 +2,11 @@ from app.dtos.priority_dto import PriorityDTO
 from app.framework.decorators.injectable import injectable
 from app.mappers.priority_mapper import PriorityMapper
 from app.models.priority import Priority
-from app.services.base_service import BaseService
+#from app.services.base_service import BaseService
 
 
 @injectable
-class PriorityService(BaseService):
+class PriorityService():
     """Read only for the moment"""
 
     def find_all(self) -> list[PriorityDTO]:
@@ -21,3 +21,5 @@ class PriorityService(BaseService):
 
     def find_one_entity(self, entity_id: int) -> Priority | None:
         return Priority.query.filter_by(priority_id=entity_id).first()
+
+    
