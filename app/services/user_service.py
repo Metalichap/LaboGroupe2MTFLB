@@ -12,7 +12,6 @@ from app.mappers.user_mapper import UserMapper
 from app.models.role import Role, RoleStatus
 from app.models.user import User
 from app.services.base_service import BaseService
-from app.models import RoleStatus
 
 
 @injectable
