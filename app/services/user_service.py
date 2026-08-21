@@ -41,7 +41,7 @@ class UserService(BaseService):
     def find_one_entity(self, entity_id: int) -> User | None:
         return User.query.filter_by(user_id=entity_id).first()
 
-    def find_one_by(self, **kwargs: dict[str, Any]) -> User | None:
+    def find_one_by(self, **kwargs) -> User | None:
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
 
