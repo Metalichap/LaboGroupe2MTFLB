@@ -6,6 +6,7 @@ from app.framework.decorators.injectable import injectable
 from app.mappers.ticket_mapper import TicketMapper
 from app.models.ticket import Ticket
 from app.services.base_service import BaseService
+from app.dtos.user_dto import UserDTO
 
 
 @injectable
@@ -53,6 +54,16 @@ class TicketService(BaseService):
 
     def find_one_by(self, **kwargs) -> Ticket | None:
         return Ticket.query.filter_by(**kwargs).first()
+    
+    def is_authorised(
+        self,
+        ticket: Ticket,
+        user: UserDTO
+    ) -> bool:
+        return (
+            ticket.author_id == user.user_id
+            or ticket.technician_id == user.user_id
+        )
 
 
     # --- crUd ------------------------------------------------------------
