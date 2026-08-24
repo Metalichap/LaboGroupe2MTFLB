@@ -6,7 +6,6 @@ from wtforms.validators import DataRequired, Length, Optional
 class TicketUpdateForm(FlaskForm):
     ticket_title = StringField('ticket_title', validators=[DataRequired(), Length(max=63)])
     ticket_description = TextAreaField('ticket_description', validators=[Optional()])
-    ticket_due_date = DateTimeField('ticket_due_date', format='%Y-%m-%d', validators=[Optional()])
 
     # Choix peuplés par le controller avant le rendu.
     category_id = SelectField('category_id', coerce=int, validators=[DataRequired()])

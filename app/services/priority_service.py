@@ -22,4 +22,7 @@ class PriorityService():
     def find_one_entity(self, entity_id: int) -> Priority | None:
         return Priority.query.filter_by(priority_id=entity_id).first()
 
+    def find_one_by(self, **kwargs) -> Priority | None:
+        return Priority.query.filter_by(**kwargs).first()
+
     

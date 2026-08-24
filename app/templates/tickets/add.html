@@ -16,17 +16,6 @@
                 {{ render_select(form.category_id) }}
                 {{ render_select(form.priority_id) }}
 
-                <div class="mb-3">
-                    {{ form.ticket_due_date.label(class="form-label") }}
-                    {{ form.ticket_due_date(class="form-control", type="date") }}
-
-                    {% if form.ticket_due_date.errors %}
-                        {% for error in form.ticket_due_date.errors %}
-                            <div class="text-danger">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
                 <button type="submit" class="btn btn-primary">Créer le ticket</button>
                 <a class="btn btn-link" href="{{ url_for('ticket_list') }}">Annuler</a>
             </form>
