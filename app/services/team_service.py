@@ -1,5 +1,5 @@
 from app import app, db
-from app.dtos.team import TeamDTO
+from app.dtos.team_dto import TeamDTO
 from app.forms.team.team_form import TeamInsertForm, TeamUpdateForm
 from app.framework.decorators.injectable import injectable
 from app.mappers.team_mapper import TeamMapper
@@ -13,7 +13,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
 
     # --- Crud -----------------------------------------------------------
 
-    def insert(self, form: TeamForm) -> TeamDTO | None:
+    def insert(self, form: TeamInsertForm) -> TeamDTO | None:
         
         team = Team()
         TeamMapper.form_to_entity(form, team)
