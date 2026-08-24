@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Any
+from types import MappingProxyType
+from app.models.base_entity import BaseEntity
 
-
-class AbstractDTO(ABC):
+class AbstractDTO[E: BaseEntity](ABC):
     """Contrat commun à tous les DTO (Data Transfer Object).
 
     Un DTO est une photo figée d'une entité, destinée à sortir de la couche
@@ -23,9 +25,9 @@ class AbstractDTO(ABC):
 
     @staticmethod
     @abstractmethod
-    def build_from_entity(entity):
+    def build_from_entity(entity: E):
         pass
 
     @abstractmethod
-    def get_json_parsable(self):
+    def get_json_parsable(self) -> MappingProxyType[str, Any]:
         pass
