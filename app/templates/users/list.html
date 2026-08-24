@@ -6,7 +6,7 @@
 
     {#
         Page réservée aux admins: la vue est décorée par
-        @auth_required(level="ADMIN"). Un visiteur non autorisé n'arrive jamais
+        @auth_required(level=RoleStatus.ADMIN). Un visiteur non autorisé n'arrive jamais
         jusqu'à ce template, il est redirigé avant.
     #}
     <div class="table-responsive">

@@ -16,6 +16,8 @@ inscription, double commande...) et le navigateur affiche un avertissement.
 """
 from flask import flash, redirect, render_template, request, url_for
 
+from app.models.role import RoleStatus
+
 from app import app
 from app.forms.user.user_forgot_password_form import UserForgotPasswordForm
 from app.forms.user.user_login_form import UserLoginForm
@@ -201,7 +203,7 @@ def password_reset(token: str, password_reset_service: PasswordResetService):
 # --- profils ----------------------------------------------------------------
 
 @app.get('/users')
-@auth_required(level="ADMIN")
+@auth_required(level=RoleStatus.ADMIN)
 @inject
 def user_list(user_service: UserService):
     return render_template('users/list.html', users=user_service.find_all())
@@ -281,7 +283,7 @@ def user_update(user_id: int, user_service: UserService, auth_service: AuthServi
 
 
 @app.post('/users/<int:user_id>/delete')
-@auth_required(level="ADMIN")
+@auth_required(level=RoleStatus.ADMIN)
 @inject
 def user_delete(user_id: int, user_service: UserService, auth_service: AuthService):
     """Désactive un compte (soft delete).
