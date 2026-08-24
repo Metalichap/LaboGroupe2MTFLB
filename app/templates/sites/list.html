@@ -1,0 +1,12 @@
+{% extends "layout/main_layout.html" %}
+{% block title %}Sites{% endblock %}
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Sites</h1>
+        {% if current_user and current_user.is_admin() %}
+            <a class="btn btn-primary" href="{{ url_for('site_add') }}">Nouveau site</a>
+        {% endif %}
+    </div>
+
+    {% include "sites/_site_table.html" %}
+{% endblock %}
