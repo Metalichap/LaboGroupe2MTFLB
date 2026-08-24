@@ -1,7 +1,8 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, VerificationError, InvalidHashError
 
-from typing import Any
+from typing import Any, Optional
+
 from app import app, db
 from app.dtos.user_dto import UserDTO
 from app.forms.user.user_login_form import UserLoginForm
@@ -16,7 +17,7 @@ from app.services.base_service import BaseService
 
 
 @injectable
-class UserService(BaseService):
+class UserService(BaseService[UserDTO, User, UserRegisterForm, UserUpdateForm]):
     """Tout ce qui concerne les utilisateurs: CRUD + inscription + connexion."""
 
     def __init__(self):
@@ -41,7 +42,7 @@ class UserService(BaseService):
     def find_one_entity(self, entity_id: int) -> User | None:
         return User.query.filter_by(user_id=entity_id).first()
 
-    def find_one_by(self, **kwargs: dict[str, Any]) -> User | None:
+    def find_one_by(self, **kwargs : Any) -> User | None:
         """Retourne une ENTITÉ (utilisé par le login, qui a besoin du hash)."""
         return User.query.filter_by(**kwargs).first()
 
@@ -56,10 +57,10 @@ class UserService(BaseService):
 
     # --- écriture -----------------------------------------------------------
 
-    def insert(self, form: UserRegisterForm) -> UserDTO | None:
+    def insert(self, data: UserRegisterForm) -> Optional[UserDTO]:
         """Inscription d'un nouvel utilisateur."""
         user = User()
-        UserMapper.form_to_entity(form, user)
+        UserMapper.form_to_entity(data, user)
 
         # Le mapper a mis le mot de passe en clair, on le remplace par son hash
         # AVANT tout contact avec la base.
@@ -81,14 +82,14 @@ class UserService(BaseService):
 
         return UserMapper.entity_to_dto(user)
 
-    def update(self, entity_id: int, form: UserUpdateForm) -> UserDTO | None:
+    def update(self, entity_id: int, data: UserUpdateForm) -> UserDTO | None:
         """Met à jour les champs non sensibles (email, description)."""
         user = self.find_one_entity(entity_id)
 
         if user is None:
             return None
 
-        UserMapper.form_to_entity(form, user)
+        UserMapper.form_to_entity(data, user)
 
         try:
             db.session.commit()
@@ -99,23 +100,24 @@ class UserService(BaseService):
 
         return UserMapper.entity_to_dto(user)
 
-    def mark_email_verified(self, entity_id: int) -> UserDTO | None:
-        """Confirme l'adresse email (appelé par EmailVerificationService)."""
-        user = self.find_one_entity(entity_id)
+    # TODO : implémenter la vérification de mail côté db, peut-être, un jour.
+    # def mark_email_verified(self, entity_id: int) -> UserDTO | None:
+    #     """Confirme l'adresse email (appelé par EmailVerificationService)."""
+    #     user = self.find_one_entity(entity_id)
 
-        if user is None:
-            return None
+    #     if user is None:
+    #         return None
 
-        user.email_verified = True
+    #     user.email_verified = True
 
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error(f"mark email verified {entity_id}: {e}")
-            db.session.rollback()
-            return None
+    #     try:
+    #         db.session.commit()
+    #     except Exception as e:
+    #         app.logger.error(f"mark email verified {entity_id}: {e}")
+    #         db.session.rollback()
+    #         return None
 
-        return UserMapper.entity_to_dto(user)
+    #     return UserMapper.entity_to_dto(user)
 
     def update_password(self, entity_id: int, plain_password: str) -> UserDTO | None:
         """Remplace le mot de passe (réinitialisation par mail).
