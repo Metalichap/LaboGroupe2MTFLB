@@ -4,7 +4,7 @@ from app.models.base_entity import BaseEntity
 from app.dtos.abstract_dto import AbstractDTO
 
 
-class AbstractMapper[T: AbstractDTO, U: BaseEntity](ABC):
+class AbstractMapper[T: AbstractDTO, U: BaseEntity, V: FlaskForm](ABC):
     """Contrat des mappers: la traduction entre les couches.
 
     Trois représentations d'une même donnée coexistent dans le projet:
@@ -28,5 +28,5 @@ class AbstractMapper[T: AbstractDTO, U: BaseEntity](ABC):
 
     @staticmethod
     @abstractmethod
-    def form_to_entity(form: FlaskForm, entity: U) -> U:
+    def form_to_entity(form: V, entity: U) -> U:
         pass
