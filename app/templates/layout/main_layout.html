@@ -42,7 +42,7 @@ block body %}`. C'est de l'héritage de template: on écrit le
             <li class="nav-item"></li>
             {% if current_user and current_user.is_admin() %} {# Ces liens ne
             sont pas la sécurité: ils sont juste cachés. Le vrai contrôle est
-            @auth_required(level="ADMIN") côté Python — un utilisateur peut
+            @auth_required(level=RoleStatus.ADMIN) côté Python — un utilisateur peut
             toujours taper l'URL. #}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('user_list') }}"
