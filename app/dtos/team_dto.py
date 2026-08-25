@@ -11,7 +11,7 @@ class TeamDTO(AbstractDTO[Team]):
         self.team_description: Optional[str] = None
 
     @staticmethod
-    def build_from_entity(entity: Team) -> TeamDTO:
+    def build_from_entity(entity: Team) -> "TeamDTO":
         team_dto = TeamDTO()
 
         team_dto.team_id = entity.team_id
