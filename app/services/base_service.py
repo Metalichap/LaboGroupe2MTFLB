@@ -5,7 +5,7 @@ from app.models.base_entity import BaseEntity
 from typing import Optional, Any
 
 
-class BaseService[DTO: AbstractDTO, E: BaseEntity, FI: FlaskForm, FU: FlaskForm](ABC):
+class BaseService[DTO: AbstractDTO[BaseEntity], E: BaseEntity, FI: FlaskForm, FU: FlaskForm](ABC):
     """Contrat CRUD commun à tous les services.
 
     Le service est la seule couche qui parle à la base (`db.session`). Les
