@@ -111,6 +111,26 @@ class AttachmentService(BaseService):
         return [AttachmentMapper.entity_to_dto(attachment)
                 for attachment in attachments]
 
+    def find_for_download(
+        self,
+        attachment_id: int,
+        current_user: UserDTO) -> AttachmentDTO | None:
+
+        attachment = db.session.get(Attachment, attachment_id)
+
+        if attachment is None or not attachment.active:
+            return None
+
+        ticket = db.session.get(Ticket, attachment.ticket_id)
+
+        if ticket is None or not ticket.active:
+            return None
+
+        if not TicketService.is_authorised(ticket, current_user):
+            return None
+
+        return AttachmentMapper.entity_to_dto(attachment)
+
     def find_all(self):
         raise NotImplementedError
 
