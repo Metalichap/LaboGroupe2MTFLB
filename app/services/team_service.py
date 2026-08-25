@@ -55,7 +55,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
 
     # --- crUd ------------------------------------------------------------
 
-    def update(self, entity_id: int, form: TeamForm) -> TeamDTO | None:
+    def update(self, entity_id: int, form: TeamInsertForm) -> TeamDTO | None:
         
         team = self.find_one_entity(entity_id)
 
