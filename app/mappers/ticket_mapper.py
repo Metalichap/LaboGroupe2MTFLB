@@ -21,7 +21,6 @@ class TicketMapper(AbstractMapper):
         if isinstance(form, TicketCreateForm):
             ticket.ticket_title = form.ticket_title.data
             ticket.ticket_description = form.ticket_description.data or ""
-            ticket.ticket_due_date = form.ticket_due_date.data
             ticket.category_id = form.category_id.data
             ticket.priority_id = form.priority_id.data
             # Statut et technicien ne sont PAS des champs du formulaire de
@@ -31,7 +30,6 @@ class TicketMapper(AbstractMapper):
         elif isinstance(form, TicketUpdateForm):
             ticket.ticket_title = form.ticket_title.data
             ticket.ticket_description = form.ticket_description.data or ""
-            ticket.ticket_due_date = form.ticket_due_date.data
             ticket.category_id = form.category_id.data
             ticket.priority_id = form.priority_id.data
             ticket.ticket_status = TicketStatus[form.ticket_status.data]

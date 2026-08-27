@@ -17,5 +17,3 @@ class Attachment(BaseEntity, db.Model):
 
     ticket = db.relationship('Ticket', back_populates='attachments')
     author = db.relationship('User')
-
-

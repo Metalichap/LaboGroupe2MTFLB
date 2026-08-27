@@ -42,6 +42,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Titre</th>
                 <th scope="col">Statut</th>
+                <th scope="col">Créé le</th>
                 <th scope="col">Catégorie</th>
                 <th scope="col">Priorité</th>
                 <th scope="col">Technicien</th>
@@ -55,6 +56,7 @@
                     <th scope="row">{{ ticket.ticket_id }}</th>
                     <td>{{ ticket.ticket_title }}</td>
                     <td><span class="badge bg-secondary">{{ ticket.ticket_status }}</span></td>
+                    <td>{{ ticket.created_at.strftime('%d/%m/%Y') if ticket.created_at else '—' }}</td>
                     <td>{{ ticket.category_name }}</td>
                     <td>{{ ticket.priority_name }}</td>
                     <td>{{ ticket.technician_username or '—' }}</td>

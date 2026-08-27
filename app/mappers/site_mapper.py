@@ -10,8 +10,11 @@ class SiteMapper(AbstractMapper):
         return SiteDTO.build_from_entity(site)
 
     @staticmethod
-    def form_to_entity(form, site: Site):
-        if isinstance(form, SiteForm):
-            site.site_name = form.name.data
-            site.site_address = form.address.data or ""
-            site.site_city = form.city.data or ""
+    def form_to_entity(form: SiteForm, site: Site) -> Site:
+        # voir si différents types de formulaire utilisés ou pas
+        site.site_name = form.name.data
+        site.site_address = form.address.data or ""
+        site.site_city = form.city.data or ""
+
+        return site
+

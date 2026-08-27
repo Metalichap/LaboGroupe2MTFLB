@@ -14,6 +14,7 @@ from app.framework.decorators.auth_required import auth_required
 from app.framework.decorators.inject import inject
 from app.models.role import RoleStatus
 from app.models.ticket import TicketStatus
+from app.models.priority import PriorityLevel
 from app.services.auth_service import AuthService
 from app.services.category_service import CategoryService
 from app.services.priority_service import PriorityService
@@ -79,6 +80,14 @@ def ticket_add(ticket_service: TicketService, category_service: CategoryService,
     if current_user is None:
         flash("Utilisateur introuvable.", "warning")
         return redirect(url_for('index'))
+
+    #Selectionnée priorité normal par défaut dans le formulaire, en GET
+    if request.method == 'GET' :
+        default_priority = priority_service.find_one_by(priority_level = PriorityLevel.NORMAL)
+        if default_priority is not None :
+            form.priority_id.data = default_priority.priority_id
+
+
 
     if form.validate_on_submit():
         if form.ticket_title.data is None:

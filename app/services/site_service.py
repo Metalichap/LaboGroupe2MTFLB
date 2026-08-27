@@ -41,12 +41,41 @@ class SiteService(BaseService):
             return None
         return SiteMapper.entity_to_dto(site)
 
-    def update(self):
+    def update(self, entity_id: int, form: SiteForm) -> SiteDTO | None:
         """
         """
-        raise NotImplementedError("")
+        site = self.find_one_entity(entity_id)
 
-    def delete(self):
+        if site is None:
+            return None
+
+        SiteMapper.form_to_entity(form, site)
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            app.logger.error(f"Update site {entity_id} : {e}")
+            db.session.rollback()
+            return None
+        
+        return SiteMapper.entity_to_dto(site)
+
+    def delete(self, entity_id: int) -> int | None:
         """
+        Soft delete: le site est désactivé
         """
-        raise NotImplementedError("")
+        site = self.find_one_entity(entity_id)
+
+        if site is None:
+            return None
+
+        site.soft_delete()
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            app.logger.errro(f"delete site {entity_id}: {e}")
+            db.session.rollback()
+            return None
+
+        return site.site_id
