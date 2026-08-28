@@ -1,6 +1,6 @@
 from app import app, db
 from app.dtos.team_dto import TeamDTO
-from app.forms.team.team_form import TeamInsertForm, TeamUpdateForm
+from app.forms.team.team_form import TeamForm
 from app.framework.decorators.injectable import injectable
 from app.mappers.team_mapper import TeamMapper
 from app.models.team import Team
@@ -8,12 +8,12 @@ from app.services.base_service import BaseService
 
 
 @injectable
-class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
+class TeamService(BaseService[TeamDTO, Team, TeamForm, TeamForm]):
     """Category CRUD"""
 
     # --- Crud -----------------------------------------------------------
 
-    def insert(self, form: TeamInsertForm) -> TeamDTO | None:
+    def insert(self, form: TeamForm) -> TeamDTO | None:
         
         team = Team()
         TeamMapper.form_to_entity(form, team)
@@ -23,7 +23,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
             db.session.commit()
         except Exception as e:
             # log error
-            app.logger.error(f"insert category: {e}")
+            app.logger.error(f"insert team: {e}")
             db.session.rollback()
             return None
 
@@ -55,7 +55,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
 
     # --- crUd ------------------------------------------------------------
 
-    def update(self, entity_id: int, form: TeamInsertForm) -> TeamDTO | None:
+    def update(self, entity_id: int, form: TeamForm) -> TeamDTO | None:
         
         team = self.find_one_entity(entity_id)
 
@@ -68,7 +68,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
             db.session.commit()
         except Exception as e:
             # log error
-            app.logger.error(f"update category {entity_id}: {e}")
+            app.logger.error(f"update team {entity_id}: {e}")
             db.session.rollback()
             return None
 
@@ -92,7 +92,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamInsertForm, TeamUpdateForm]):
             db.session.commit()
         except Exception as e:
             # log error
-            app.logger.error(f"delete category {entity_id}: {e}")
+            app.logger.error(f"delete team {entity_id}: {e}")
             db.session.rollback()
             return None
 

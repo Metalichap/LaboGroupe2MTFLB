@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 from flask_wtf import FlaskForm
-from app.dtos.abstract_dto import AbstractDTO
 from app.models.base_entity import BaseEntity
 from typing import Optional, Any
 
 
-class BaseService[DTO: AbstractDTO[BaseEntity], E: BaseEntity, FI: FlaskForm, FU: FlaskForm](ABC):
+class BaseService[DTO, E: BaseEntity, FI: FlaskForm, FU: FlaskForm](ABC):
     """Contrat CRUD commun à tous les services.
 
     Le service est la seule couche qui parle à la base (`db.session`). Les
@@ -31,11 +30,11 @@ class BaseService[DTO: AbstractDTO[BaseEntity], E: BaseEntity, FI: FlaskForm, FU
         """Une entité par n'importe quelle colonne: find_one_by(username='x')."""
 
     @abstractmethod
-    def insert(self, data : FI) -> Optional[DTO]:
+    def insert(self, form : FI) -> Optional[DTO]:
         """Crée une entité à partir d'un formulaire validé."""
 
     @abstractmethod
-    def update(self, entity_id: int, data: FU) -> Optional[DTO]:
+    def update(self, entity_id: int, form: FU) -> Optional[DTO]:
         """Met à jour une entité existante."""
 
     @abstractmethod
