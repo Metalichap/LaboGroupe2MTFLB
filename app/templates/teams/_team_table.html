@@ -1,0 +1,48 @@
+{#
+Fragment réutilisable: le tableau des équipes.
+
+Nom préfixé d'un underscore par convention: ce n'est pas une page, elle
+n'étend pas le layout et n'est jamais rendue seule.
+
+{% include "teams/_team_table.html" %}
+
+`teams` et `current_user` sont visibles ici via le contexte partagé
+par `include`.
+#}
+{% from "macros/form_macros.html" import delete_button %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Description</th>
+                {% if current_user and current_user.is_admin() %}
+                <th scope="col">Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in teams %}
+            <tr>
+                <th scope="row">{{ team.team_id }}</th>
+                <td>{{ team.team_name }}</td>
+                <td>{{ team.team_description | truncate(60) }}</td>
+                {% if current_user and current_user.is_admin() %}
+                <td class="d-flex gap-1 flex-wrap">
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('team_update', team_id=team.team_id) }}">
+                        Éditer
+                    </a>
+                    {{ delete_button(url_for('team_delete', team_id=team.team_id)) }}
+                </td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-muted">Aucune équipe.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
