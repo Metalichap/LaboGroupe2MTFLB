@@ -19,7 +19,7 @@
             {{ render_field(form.team_name) }}
             {{ render_field(form.team_description) }}
 
-            <button type="submit" class="btn btn-primary">Créer</button>
+            <button type="submit" class="btn btn-primary">{{ 'Créer' if team is none else 'Editer'}}</button>
             <a class="btn btn-link" href="{{ url_for('team_list') }}">Annuler</a>
         </form>
     </div>

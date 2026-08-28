@@ -47,7 +47,7 @@ class TeamService(BaseService[TeamDTO, Team, TeamForm, TeamForm]):
         return TeamMapper.entity_to_dto(team) if team else None
 
     def find_one_entity(self, entity_id: int) -> Team | None:
-        return Team.query.filter_by(category_id=entity_id).first()
+        return Team.query.filter_by(team_id=entity_id).first()
 
     def find_one_by(self, **kwargs) -> Team | None:
         return Team.query.filter_by(**kwargs).first()
