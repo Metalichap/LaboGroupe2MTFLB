@@ -20,6 +20,7 @@ from app.services.category_service import CategoryService
 from app.services.priority_service import PriorityService
 from app.services.ticket_service import TicketService
 from app.services.user_service import UserService
+from app.mappers.ticket_mapper import TicketMapper
 
 
 def _populate_category_and_priority_choices(form, category_service: CategoryService,
@@ -92,11 +93,11 @@ def ticket_add(ticket_service: TicketService, category_service: CategoryService,
     if form.validate_on_submit():
         if form.ticket_title.data is None:
             raise MissingDataException("missing ticket_title !")
-
+        command  = TicketMapper.form_to_create_command(form)
         # L'auteur n'est jamais un champ du formulaire: c'est toujours
         # l'utilisateur connecté qui crée le ticket, jamais une valeur postée
         # (même raisonnement que pour user_id/roles dans user_controller.py).
-        ticket = ticket_service.insert(form, author_id=current_user.user_id)
+        ticket = ticket_service.insert(command, author_id=current_user.user_id)
 
         if ticket is None:
             flash("Impossible de créer le ticket.", "danger")
@@ -139,7 +140,9 @@ def ticket_update(ticket_id: int, ticket_service: TicketService,
         if form.ticket_title.data is None:
             raise MissingDataException("missing ticket_title !")
 
-        updated = ticket_service.update(ticket_id, form)
+        
+        command  = TicketMapper.form_to_update_command(form)
+        updated = ticket_service.update(ticket_id, command)
 
         if updated is None:
             flash("Impossible de mettre à jour le ticket.", "danger")
@@ -149,7 +152,7 @@ def ticket_update(ticket_id: int, ticket_service: TicketService,
 
     # En GET, préremplir le statut et le technicien actuels dans les selects.
     if request.method == 'GET':
-        form.ticket_status.data = ticket.ticket_status if ticket.ticket_status else None
+        form.ticket_status.data = TicketStatus(ticket.ticket_status).name if ticket.ticket_status else None
         form.technician_id.data = str(ticket.technician_id) if ticket.technician_id else ''
 
     return render_template('tickets/update.html', form=form, ticket=ticket)

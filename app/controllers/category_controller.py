@@ -10,6 +10,7 @@ from app import app
 from app.forms.category.category_form import CategoryForm
 from app.framework.decorators.auth_required import auth_required
 from app.framework.decorators.inject import inject
+from app.mappers.category_mapper import CategoryMapper
 from app.services.category_service import CategoryService
 
 
@@ -27,7 +28,8 @@ def category_add(category_service: CategoryService):
     form = CategoryForm()
 
     if form.validate_on_submit():
-        category = category_service.insert(form)
+        command = CategoryMapper.form_to_command(form)
+        category = category_service.insert(command)
 
         if category is None:
             flash("Ce nom de catégorie est déjà utilisé.", "danger")
@@ -35,7 +37,6 @@ def category_add(category_service: CategoryService):
             flash("Catégorie créée.", "success")
             return redirect(url_for('category_list'))
 
-    # category=None -> le template add_or_update.html affiche "Nouvelle catégorie"
     return render_template('categories/add_or_update.html', form=form, category=None)
 
 
@@ -49,11 +50,11 @@ def category_update(category_id: int, category_service: CategoryService):
         flash("Catégorie introuvable.", "warning")
         return redirect(url_for('category_list'))
 
-    # obj=category pré-remplit les champs de même nom en GET.
     form = CategoryForm(obj=category)
 
     if form.validate_on_submit():
-        updated = category_service.update(category_id, form)
+        command = CategoryMapper.form_to_command(form)
+        updated = category_service.update(category_id, command)
 
         if updated is None:
             flash("Ce nom de catégorie est déjà utilisé.", "danger")
@@ -68,11 +69,6 @@ def category_update(category_id: int, category_service: CategoryService):
 @auth_required()
 @inject
 def category_delete(category_id: int, category_service: CategoryService):
-    """Désactive une catégorie (soft delete).
-
-    En POST et pas en GET: une action qui modifie l'état ne doit jamais être
-    accessible par un simple lien.
-    """
     if category_service.delete(category_id) is None:
         flash("Suppression impossible.", "danger")
     else:
