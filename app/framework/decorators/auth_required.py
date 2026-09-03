@@ -1,5 +1,6 @@
 import inspect
 from functools import wraps
+from typing import Optional, Callable
 
 from flask import flash, redirect, request, url_for
 
@@ -8,7 +9,7 @@ from app.services.auth_service import AuthService
 from app.models.role import RoleStatus
 
 
-def auth_required(level = None, or_is_current_user: bool =False):
+def auth_required(level : Optional[RoleStatus] = None, or_is_current_user: bool = False):
     """Protège une vue MVC: il faut être connecté, et avoir le droit d'entrer.
 
         @app.get('/basket')
@@ -69,7 +70,7 @@ def auth_required(level = None, or_is_current_user: bool =False):
                     f"`user_id` (venant de l'URL), sinon la règle de propriété "
                     f"ne peut jamais s'appliquer.")
 
-            if level == RoleStatus.CLIENT:
+            if level != RoleStatus.ADMIN and level is not None:
                 raise ValueError(
                     f"auth_required(level=\"USER\", or_is_current_user=True) sur "
                     f"{func.__name__}(): tout utilisateur connecté a le rôle "

@@ -4,16 +4,15 @@ from app.forms.user.user_register_form import UserRegisterForm
 from app.forms.user.user_update_form import UserUpdateForm
 from app.mappers.abstract_mapper import AbstractMapper
 from app.models.user import User
-from flask_wtf import FlaskForm
 
 
-class UserMapper(AbstractMapper[UserDTO, User]):
+class UserMapper(AbstractMapper[UserDTO, User, UserRegisterForm]):
     @staticmethod
     def entity_to_dto(entity: User) -> UserDTO:
         return UserDTO.build_from_entity(entity)
 
     @staticmethod
-    def form_to_entity(form: FlaskForm, entity: User) -> User:
+    def form_to_entity(form: UserRegisterForm, entity: User) -> User:
         """Reporte les champs du formulaire sur l'entité.
 
         Un seul mapper pour plusieurs formulaires: on regarde le type reçu.

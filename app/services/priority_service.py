@@ -11,13 +11,13 @@ class PriorityService():
 
     def find_all(self) -> list[PriorityDTO]:
         # active=True: on ne montre pas les priorités désactivées (soft delete).
-        return [PriorityMapper.entity_to_dto(priority)
+        return [PriorityDTO.build_from_entity(priority)
                 for priority in Priority.query.filter_by(active=True).order_by(Priority.priority_id).all()]
 
     def find_one(self, entity_id: int) -> PriorityDTO | None:
         priority = self.find_one_entity(entity_id)
 
-        return PriorityMapper.entity_to_dto(priority) if priority else None
+        return PriorityDTO.build_from_entity(priority) if priority else None
 
     def find_one_entity(self, entity_id: int) -> Priority | None:
         return Priority.query.filter_by(priority_id=entity_id).first()

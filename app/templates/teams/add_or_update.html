@@ -1,0 +1,27 @@
+{% extends "layout/main_layout.html" %}
+{% from "macros/form_macros.html" import render_field, render_select %}
+
+{% block title %}
+{{ "Nouvelle équipe" if team is none else 'Modifier ' ~ team.team_name }}
+{% endblock %}
+
+{% block body %}
+<h1 class="h3 mb-4">
+    {{ "Nouvelle équipe" if team is none else 'Modifier ' ~ team.team_name }}
+</h1>
+
+<div class="row">
+    <div class="col-md-5">
+        <form method="post" action="{{ url_for('team_add') if team is none
+                else url_for('team_update', team_id=team.team_id) }}">
+            {{ form.hidden_tag() }}
+
+            {{ render_field(form.team_name) }}
+            {{ render_field(form.team_description) }}
+
+            <button type="submit" class="btn btn-primary">{{ 'Créer' if team is none else 'Editer'}}</button>
+            <a class="btn btn-link" href="{{ url_for('team_list') }}">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

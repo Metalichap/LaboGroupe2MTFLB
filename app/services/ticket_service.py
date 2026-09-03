@@ -2,14 +2,15 @@ from datetime import datetime, timedelta, timezone
 
 from app import app, db
 from app.dtos.ticket_dto import TicketDTO
-from app.forms.ticket.ticket_create_form import TicketCreateForm
-from app.forms.ticket.ticket_update_form import TicketUpdateForm
+
 from app.framework.decorators.injectable import injectable
 from app.mappers.ticket_mapper import TicketMapper
 from app.models.ticket import Ticket
 from app.models.priority import Priority
 from app.services.base_service import BaseService
 from app.dtos.user_dto import UserDTO
+from app.dtos.commands.ticket_create_command import TicketCreateCommand
+from app.dtos.commands.ticket_update_command import TicketUpdateCommand
 
 
 @injectable
@@ -18,17 +19,16 @@ class TicketService(BaseService):
 
     # --- Crud -----------------------------------------------------------
     
-    def insert(self, form: TicketCreateForm, author_id: int) -> TicketDTO | None:
+    def insert(self,command : TicketCreateCommand, author_id: int) -> TicketDTO | None:
         """Création d'un nouveau ticket.
         """
 
         #récupération de la priorité pour le calcul du SLA et de la due_date. Si la priorité envoyé est introuvable, on interomp le process
-        priority = Priority.query.filter_by(priority_id=form.priority_id.data).first()
+        priority = Priority.query.filter_by(priority_id=command.priority_id).first()
         if priority is None:
-            app.logger.error(f"insert ticket: priority {form.priority_id.data} introuvable")
+            app.logger.error(f"insert ticket: priority {command.priority_id} introuvable")
             return None
-        ticket = Ticket()
-        TicketMapper.form_to_entity(form, ticket)
+        ticket = command.apply_to_entity(Ticket())
         ticket.author_id = author_id
         ticket.ticket_due_date = datetime.now(timezone.utc) + timedelta(hours=priority.priority_delay_hours)
 
@@ -40,25 +40,25 @@ class TicketService(BaseService):
             db.session.rollback()
             return None
 
-        return TicketMapper.entity_to_dto(ticket)
+        return TicketDTO.build_from_entity(ticket)
 
     # --- cRud ------------------------------------------------------------
     
 
     def find_all(self) -> list[TicketDTO]:
         # active=True: on ne montre pas les tickets désactivés (soft delete).
-        return [TicketMapper.entity_to_dto(ticket)
+        return [TicketDTO.build_from_entity(ticket)
                 for ticket in Ticket.query.filter_by(active=True).order_by(Ticket.ticket_id).all()]
 
     def find_all_by_technician(self, technician_id: int) -> list[TicketDTO]:
-        return [TicketMapper.entity_to_dto(ticket)
+        return [TicketDTO.build_from_entity(ticket)
                 for ticket in Ticket.query.filter_by(technician_id=technician_id, active=True)
                                           .order_by(Ticket.ticket_id).all()]
 
     def find_one(self, entity_id: int) -> TicketDTO | None:
         ticket = self.find_one_entity(entity_id)
 
-        return TicketMapper.entity_to_dto(ticket) if ticket else None
+        return TicketDTO.build_from_entity(ticket) if ticket else None
 
     def find_one_entity(self, entity_id: int) -> Ticket | None:
         return Ticket.query.filter_by(ticket_id=entity_id).first()
@@ -79,13 +79,13 @@ class TicketService(BaseService):
 
     # --- crUd ------------------------------------------------------------
 
-    def update(self, entity_id: int, form: TicketUpdateForm) -> TicketDTO | None:
+    def update(self, entity_id: int, command : TicketUpdateCommand) -> TicketDTO | None:
         ticket = self.find_one_entity(entity_id)
 
         if ticket is None:
             return None
 
-        TicketMapper.form_to_entity(form, ticket)
+        command.apply_to_entity(ticket)
 
         try:
             db.session.commit()
@@ -94,7 +94,7 @@ class TicketService(BaseService):
             db.session.rollback()
             return None
 
-        return TicketMapper.entity_to_dto(ticket)
+        return TicketDTO.build_from_entity(ticket)
 
     # --- cruD ------------------------------------------------------------
 
